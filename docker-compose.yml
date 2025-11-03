@@ -1,0 +1,55 @@
+# Definição dos serviços (contêineres)
+services:
+
+  # Serviço da Aplicação (Laravel/PHP)
+  app:
+    build:
+      context: ./docker/php # Caminho para o Dockerfile do PHP
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html # Mapeia a pasta 'src' local para dentro do contêiner
+    networks:
+      - laravel-network
+
+  # Serviço do Banco de Dados (MariaDB)
+  db:
+    image: mariadb:10.6 # Imagem oficial do MariaDB
+    container_name: laravel_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: laravel_db
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: secret
+    volumes:
+      - dbdata:/var/lib/mysql # Volume para persistir os dados do banco
+    ports:
+      - "3306:3306" # Expõe a porta do MariaDB para o seu computador (opcional)
+    networks:
+      - laravel-network
+
+  # Serviço do Servidor Web (Nginx)
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: laravel_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80" # Acessaremos nossa aplicação em http://localhost:8000
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - laravel-network
+
+# Definição das redes
+networks:
+  laravel-network:
+    driver: bridge
+
+# Definição dos volumes
+volumes:
+  dbdata:
+    driver: local
