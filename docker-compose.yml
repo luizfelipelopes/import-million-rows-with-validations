@@ -4,8 +4,8 @@ services:
   # Serviço da Aplicação (Laravel/PHP)
   app:
     build:
-      context: ./docker/php # Caminho para o Dockerfile do PHP
-      dockerfile: Dockerfile
+      context: . # Caminho para o Dockerfile do PHP
+      dockerfile: docker/php/Dockerfile
     container_name: laravel_app
     restart: unless-stopped
     working_dir: /var/www/html
