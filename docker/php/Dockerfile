@@ -34,13 +34,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # This fixes the "dubious ownership" warning.
 RUN git config --global --add safe.directory /var/www/html
 
-# Copy only composer files and install dependencies
-COPY ./src/composer.json ./src/composer.lock ./
-RUN composer install --optimize-autoloader --no-interaction --no-scripts
-
 # --- FIX 2: Copy the application code BEFORE running commands that need it ---
-# Now copy the rest of your application code
+# Copy all application code
 COPY src/ .
+
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
 
 # (Add this near where you copy the entrypoint.sh)
 COPY docker/php/wait-for-it.sh /usr/local/bin/wait-for-it.sh

@@ -9,6 +9,10 @@ wait-for-it.sh db
 
 # Run Laravel optimizations and migrations
 echo "Running Laravel setup commands..."
+
+# Install composer dependencies (runs on the mounted volume)
+composer install --optimize-autoloader --no-interaction --no-scripts
+
 php artisan config:cache
 php artisan route:cache
 php artisan migrate --force
