@@ -72,7 +72,7 @@ class CustomersImportCommand extends Command
         }
         
         $validateCompany = $this->validateCompany($row[3]);
-        if($validateCompany) {
+        if(!$validateCompany) {
             return false;
         }
         
